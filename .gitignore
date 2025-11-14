@@ -1,0 +1,12 @@
+data/
+datasets/
+raw/
+images/
+outputs/embeddings/
+outputs/features/
+*.npy
+*.npz
+*.pt
+*.pth
+*.ckpt
+*.csv
