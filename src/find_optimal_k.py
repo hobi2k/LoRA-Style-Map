@@ -31,7 +31,7 @@ features = np.load(EMB_PATH)
 print(f"[INFO] 불러온 임베딩: {features.shape}")
 
 # 차원 축소 작업
-print("[STEP] PCA 진행 (512 -> 50)")
+print("[STEP] PCA 진행 (512 -> 50)") # 추후 성능을 위해 50이 아닌 128도 고려해볼 것
 pca = PCA(n_components=50, random_state=42)
 pca_features = pca.fit_transform(features)
 

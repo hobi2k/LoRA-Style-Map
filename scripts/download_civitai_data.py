@@ -132,7 +132,7 @@ def open_csv_for_append(csv_exists: bool):
     f = open(CSV_PATH, "a", newline="", encoding="utf-8")
     writer = csv.writer(f)
     if not csv_exists:
-        writer.writerow(["filename", "lora_name", "image_url", "keyword", "sort", "run_index"])
+        writer.writerow(["filename", "lora_id", "model_version_id", "civitai_url", "lora_name", "image_url", "keyword", "sort", "run_index"])
     # f가 열린 파일 객체, writer가 csv.writer 객체
     # 파일 객체도 반환해야 나중에 닫을 수 있음
     return f, writer
@@ -215,7 +215,7 @@ def collect_images():
     """
     LoRA 이미지를 여러 번 반복 호출하며 누적 다운로드합니다.
     - 이어받기 지원: 기존 CSV/폴더를 참조하여 중복 방지 및 파일명 번호 이어쓰기
-    - 각 라운드(run)마다 keyword × sort 조합을 순회
+    - 각 실행마다 keyword × sort 조합을 순회
     """
     # 이어받기 상태 구성
     seen_urls, collected, csv_exists = init_resume_state()
@@ -241,6 +241,9 @@ def collect_images():
                     for model in models:
                         # 이미지 URL/이름 추출
                         try:
+                            lora_id = model.get("id", None)      
+                            version_id = model["modelVersions"][0].get("id", None)
+                            civitai_url = model["modelVersions"][0].get("downloadUrl", None)                            
                             image_url = model["modelVersions"][0]["images"][0]["url"]
                             name = model.get("name", "unknown_model")
                         except (KeyError, IndexError):
@@ -258,7 +261,7 @@ def collect_images():
 
                         # 다운로드 및 CSV 기록
                         if download_image(image_url, save_path):
-                            writer.writerow([filename, name, image_url, keyword, sort, run])
+                            writer.writerow([filename, lora_id, version_id, civitai_url, name, image_url, keyword, sort, run])
                             csv_file.flush()  # 비정상 종료 대비하여 buffer에 쌓인 데이터 즉시 기록
                             print(f"[OK] {filename} 저장 (총 {collected}장)")
                         else:

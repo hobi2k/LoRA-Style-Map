@@ -1,0 +1,148 @@
+CLIP (Contrastive Language–Image Pretraining) 정리
+1. CLIP이란 무엇인가
+
+CLIP은 OpenAI가 개발한 텍스트–이미지 공동 임베딩 모델이다.
+이미지와 문장을 같은 의미 공간(latent space)에 매핑하도록 학습되어, 두 입력 간의 의미적 유사도를 계산할 수 있다.
+
+“이 이미지에는 어떤 문장이 어울릴까?”
+라는 질문을 학습 목표로 설정한 모델이다.
+
+논문: Learning Transferable Visual Models From Natural Language Supervision (Radford et al., 2021)
+
+2. CLIP의 구조
+
+CLIP은 두 개의 인코더로 구성된다.
+
+구성요소	역할	출력
+Image Encoder	이미지를 의미 벡터로 변환	512차원 벡터
+Text Encoder	문장을 의미 벡터로 변환	512차원 벡터
+
+두 인코더는 같은 의미 공간(same latent space)을 공유한다.
+따라서 두 임베딩 간의 코사인 유사도(Cosine Similarity) 를 계산하여 이미지와 문장의 의미적 유사도를 측정할 수 있다.
+
+# 두 개의 벡터의 코사인 유사도 계산이 1이면 완전히 "방향"이 같고 0이면 0이면 무관계, -1이면 반대
+
+3. 학습 방식 (Contrastive Learning)
+
+CLIP은 약 4억 쌍의 이미지–문장 데이터를 이용해 대조 학습(Contrastive Learning) 으로 훈련된다.
+
+올바른 이미지–문장 쌍(positive pair)은 유사도를 높게
+
+무관한 이미지–문장 쌍(negative pair)은 유사도를 낮게
+
+즉, 정답 쌍의 코사인 유사도를 최대화하고, 오답 쌍의 유사도를 최소화하도록 학습된다.
+
+4. 임베딩(Embedding)의 의미
+
+임베딩(Embedding) 은 비정형 데이터를 의미를 보존한 채 수치 벡터로 변환하는 것을 의미한다.
+CLIP의 경우, 이미지를 입력으로 받아 전체 의미를 요약한 512차원 벡터로 압축한다.
+
+픽셀 하나하나를 임베딩하는 것이 아니라, 이미지 전체의 시각적 의미를 벡터로 표현한다.
+
+5. Vision Transformer (ViT-B/16) 기반 임베딩 과정
+
+입력 이미지 크기: (3 × 224 × 224)
+
+CLIP의 이미지 인코더(Vision Encoder)는 입력 이미지를 내부적으로 224×224 픽셀 크기로 리사이즈해서 처리한다.
+즉, 어떤 크기의 이미지를 넣더라도, 인코더에 들어가기 전 단계에서 224×224로 변환된 뒤 패치 단위로 쪼개진다.
+
+이미지를 16×16 크기의 패치로 분할 (총 196개 패치)
+
+각 패치를 768차원 벡터로 변환 (패치 임베딩)
+
+Transformer Encoder를 통해 패치 간의 관계 학습
+
+[CLS] 토큰이 전체 이미지를 요약
+
+최종 선형층을 통해 512차원 벡터로 투영 (이미지 임베딩)
+
+결과적으로 입력 이미지(3×224×224)는 512차원의 의미 벡터로 표현된다.
+
+6. 텍스트 임베딩과의 관계
+
+텍스트 인코더는 GPT-2 스타일의 Transformer로 구성되어 있으며,
+문장을 입력받아 512차원 의미 벡터를 생성한다.
+
+구분	입력	출력
+이미지 인코더	3×224×224 픽셀	512차원 벡터
+텍스트 인코더	문장 토큰 시퀀스	512차원 벡터
+
+두 벡터는 동일한 의미 공간에 존재하므로,
+코사인 유사도(cosine similarity)를 통해
+“이 이미지에 이 문장이 어울리는가”를 측정할 수 있다.
+
+7. CLIP을 이용한 스타일 분류 (Style Classification)
+
+CLIPStyleClassifier 모델은 CLIP의 이미지 인코더를 백본(backbone) 으로 사용하고,
+그 출력을 MLP (Multi-Layer Perceptron, 다층 퍼셉트론) 분류기에 전달하여
+이미지의 스타일(예: anime, realistic, sketch 등)을 예측한다.
+
+모델 구조
+
+CLIP 이미지 인코더 → 512차원 임베딩 → MLP Head (512 → 256 → num_classes)
+
+8. 픽셀 수준 의미와 임베딩의 의미 차이
+
+CLIP의 임베딩은 개별 픽셀의 RGB 값보다,
+이미지 전체의 시각적 패턴과 개념을 요약한 추상적 표현이다.
+
+이미지 예시	임베딩이 포착하는 의미
+고양이	fur texture, animal, cat face
+풍경	nature, sky, green field
+애니 캐릭터	flat shading, big eyes, stylized art
+
+즉, 임베딩은 “픽셀 → 의미적 개념”으로의 변환을 수행한다.
+
+9. 핵심 요약
+
+CLIP은 이미지와 텍스트를 같은 의미 공간에 임베딩시켜
+“픽셀 → 의미 벡터”로 변환하고,
+두 임베딩 간의 유사도를 통해 의미적 관계를 학습한다.
+
+핵심 특징
+
+이미지 인코더: Vision Transformer 기반
+
+텍스트 인코더: Transformer 기반
+
+출력 공간: 512차원 의미 임베딩
+
+응용 분야: Zero-shot 분류, 이미지 검색, 스타일 분류 등
+
+10. 함께 공부하면 좋은 개념
+개념	설명
+Contrastive Learning	긍정/부정 쌍을 이용해 임베딩 공간을 학습하는 방법
+Vision Transformer (ViT)	이미지를 패치 단위로 Transformer에 입력하는 모델
+Cosine Similarity	두 벡터 간의 방향적 유사도를 계산
+Zero-shot Classification	텍스트 프롬프트만으로 새로운 클래스를 분류
+Fine-tuning	사전학습된 모델을 특정 작업에 맞게 미세 조정하는 과정
+
+11. 핵심 문장 요약
+
+CLIP의 임베딩은 픽셀 수준의 정보를 넘어,
+이미지 전체의 시각적 의미를 512차원 벡터로 표현한다.
+텍스트 임베딩과 동일한 공간에서 비교가 가능하도록 학습되어,
+멀티모달(Multi-modal) 인공지능의 핵심 기반을 이룬다.
+
+
+12. 패치(patch)와 CNN 커널(kernel)의 비교
+
+구분	CNN 커널	ViT 패치
+역할	이미지를 “슬라이딩 윈도우”로 훑으며 특징 추출	이미지를 “고정 크기 블록”으로 나누어 각각을 토큰(token)으로 사용
+동작 방식	커널이 겹치면서(스트라이드 단위로 이동) 지역적 특징을 학습	겹치지 않고 이미지를 일정한 격자로 잘라 입력
+출력 단위	하나의 convolution 결과(feature map pixel)	하나의 패치 벡터(패치 임베딩)
+학습 파라미터	커널 가중치(weight) 학습	패치를 선형 변환(linear projection)할 때의 가중치 학습
+위치 정보	커널이 공간적 연속성을 내포	별도의 positional embedding 필요
+
+요약하면:
+
+CNN의 커널은 “이미지를 훑으며(local receptive field)”
+지역적 특징(feature) 을 추출하고,
+
+ViT의 패치는 “이미지를 일정한 조각으로 나눠(global view)”
+전체 구조를 Transformer로 학습한다.
+
+즉,
+패치 = 커널의 입력 분할 단위,
+커널 = 패치 내 정보를 조합하는 필터
+정도로 생각하면 된다.
