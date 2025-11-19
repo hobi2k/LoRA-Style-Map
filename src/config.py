@@ -62,14 +62,3 @@ class Config:
     # 디바이스 변수
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
     
-    
-    
-    """
-    추후 실시간 추론 기능 구현용
-    """
-    # # CivitAI API 설정 추가
-    # CIVITAI_API_URL = "https://civitai.com/api/v1/models"
-    # CIVITAI_PAGE_LIMIT = 10  # 한 번에 불러올 모델 수
-    # CIVITAI_TIMEOUT = 10  # API 요청 타임아웃(초)
-    # # 모델 가중치 저장 경로
-    # MODEL_PATH = OUTPUT_DIR / "models" / "lora_style_classifier.pth"

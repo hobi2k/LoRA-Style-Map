@@ -60,6 +60,7 @@ with torch.no_grad():
         # return_tensors="pt"로 텐서 반환, padding=True로 배치 내 이미지 크기 최대 크기로 맞춤
         inputs = clip_processor(images=image, return_tensors="pt", padding=True).to(device)
         # get_image_features 메서드는 비전 인코더의 출력값 잠재 표현이 공유 임베딩 공간으로 사영된 이미지 임베딩을 반환.
+        # **inputs: 딕셔너리 언패킹으로 입력 (CLIPProcessor가 반환한 inputs는 dict 형태)
         outputs = clip_model.get_image_features(**inputs)
         # 임베딩 출력값이 총합 1이 되도록 L2 정규화 
         outputs = outputs / outputs.norm(p=2, dim=-1, keepdim=True)  # -> (batch_size, 512)

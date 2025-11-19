@@ -173,7 +173,7 @@ def fetch_lora_models(keyword: str, sort: str, limit: int = LIMIT_PER_REQUEST) -
             resp.raise_for_status()
             # 응답 JSON 파싱 후 최상위 키 items 가져옴. 없으면 기본값 [].
             data = resp.json().get("items", [])
-            print(f"[INFO] keyword='{keyword}' sort='{sort}' → {len(data)}개")
+            print(f"[INFO] keyword='{keyword}' sort='{sort}' -> {len(data)}개")
             return data
         except requests.exceptions.RequestException as e:
             print(f"[ERROR] 요청 실패: keyword='{keyword}' sort='{sort}' attempt={attempt}: {e}")
