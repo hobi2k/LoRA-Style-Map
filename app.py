@@ -3,8 +3,8 @@
 Streamlit UI – LoRA CLIP Style Map & Recommendation System
 
 기능
-1. 텍스트 프롬프트 → 클러스터 추천
-2. LoRA ID → 자동 분류
+1. 텍스트 프롬프트 -> 클러스터 추천
+2. LoRA ID -> 자동 분류
 3. UMAP 스타일 맵 시각화 표시
 4. 클러스터별 대표 이미지 미리보기
 
@@ -132,7 +132,7 @@ with tab3:
     if umap_img_path.exists():
         st.image(str(umap_img_path), use_container_width=True)
     else:
-        st.warning("UMAP 이미지가 존재하지 않습니다. cluster_embeddings.py 먼저 실행해주세요.")
+        st.warning("UMAP 이미지가 존재하지 않습니다. cluster_embeddings.py 먼저 실행해 주세요.")
 
 
 # TAB 4: Cluster Sample Browser
