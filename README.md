@@ -8,6 +8,8 @@ CLIP Embedding 기반 LoRA 자동 클러스터링 & 프롬프트 스타일 추�
 
 본 프로젝트는 CivitAI LoRA 모델들을 수집해서 CLIP 모델로 이미지를 임베딩하고 군집화(KMeans)를 수행합니다. 그 다음에는 스타일 맵(UMAP 시각화)을 만들고 실시간 LoRA 자동 군집화, 텍스트 프롬프트 추천 시스템으로 이어지는 파이프라인 전체를 구현합니다.
 
+(데모 영상)[https://drive.google.com/file/d/1uffQd-OB8J0OO2V_sduoNDcEpBRQkUPG/view?usp=drive_link]
+
 ## 프로젝트 구성요소
 - 비지도 클러스터링 기반 스타일 맵 구축
 - 실시간 LoRA 자동 스타일 태깅
@@ -86,7 +88,7 @@ CLIP Embedding 기반 LoRA 자동 클러스터링 & 프롬프트 스타일 추�
 
 **STEP 7**: Downstream
   - classify_new (단일 LoRA 분류)
-  - recommend_by_prompt (텍스트 → 스타일 추천)
+  - recommend_by_prompt (텍스트 → s스타일 추천)
   - auto_classify_civitai (주기적 자동 분류)
   - Streamlit 서비스 UI
 
