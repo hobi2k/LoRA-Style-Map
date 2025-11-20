@@ -66,48 +66,29 @@ CLIP Embedding 기반 LoRA 자동 클러스터링 & 프롬프트 스타일 추�
 
 # 전체 시스템 아키텍처
 
-```mermaid
-             ┌─────────────────────────┐
-             │  CivitAI REST API        │
-             └──────────┬──────────────┘
-                        │  (LoRA 이미지 수집)
-                        ▼
-         ┌──────────────────────────────────┐
-         │   Raw Images (data/raw/all)       │
-         └───────────────────┬───────────────┘
-                             │
-                             ▼
-           ┌────────────────────────────────────┐
-           │    CLIP Image Encoder (512-dim)     │
-           └───────────────────┬─────────────────┘
-                               │ npy 저장
-                               ▼
-           ┌────────────────────────────────────┐
-           │   PCA -> UMAP (2D)                   │
-           └───────────────────┬─────────────────┘
-                               │
-                           2D 시각화
-                               │
-                               ▼
-                    ┌──────────────────┐
-                    │   KMeans(k)       │
-                    └───────┬──────────┘
-                            │
-                            ▼
-        ┌─────────────────────────────────────────┐
-        │ cluster_labels.csv + centroids.npy       │
-        └──────────────┬──────────────────────────┘
-                       │
-         ┌─────────────────────────────────────────────────┐
-         │  classifier_core.py (공유 엔진: 임베딩/코사인/예측)  │
-         └──────────────┬──────────────────────────────────┘
-                        │
-   ┌───────────────┬───────────────────────────────┬────────────────────┐
-   │               │                               │                    │
-   ▼               ▼                               ▼                    ▼
-classify_new   recommend_by_prompt        auto_classify_civitai       Streamlit
-(단일 LoRA)    (프롬프트 추천)          (주기적 자동 분류)        (UI 서비스)
-```
+**STEP 1**: CivitAI REST API
+        -> LoRA 이미지 수집
+
+**STEP 2**: Raw Images (data/raw/all)
+
+**STEP 3**: CLIP Image Encoder (512-dim)
+        -> embeddings.npy 저장
+
+**STEP 4**: PCA → UMAP (2D)
+        -> 2D 시각화용 좌표 생성
+
+**STEP 5**: KMeans(k)
+        -> cluster_labels.csv
+        -> cluster_centroids.npy
+
+**STEP 6**: classifier_core.py
+        -> 임베딩 변환 / 코사인 유사도 / 최근접 클러스터 계산
+
+**STEP 7**: Downstream
+  - classify_new (단일 LoRA 분류)
+  - recommend_by_prompt (텍스트 → 스타일 추천)
+  - auto_classify_civitai (주기적 자동 분류)
+  - Streamlit 서비스 UI
 
 ---
 
