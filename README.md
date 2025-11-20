@@ -27,7 +27,7 @@ CLIP Embedding 기반 LoRA 자동 클러스터링 & 프롬프트 스타일 추�
 ## 2. CLIP 기반 이미지 임베딩 (512-dim)
 
 - openai/clip-vit-base-patch32 비전 인코더 활용
-- 모든 LoRA 이미지 → 512차원 벡터 변환
+- 모든 LoRA 이미지 512차원 벡터 변환
 - .npy 파일로 저장하여 재사용
 
 ## 3. PCA + UMAP 차원 축소
