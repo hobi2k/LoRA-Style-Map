@@ -69,17 +69,17 @@ CLIP Embedding 기반 LoRA 자동 클러스터링 & 프롬프트 스타일 추�
 ```mermaid
 flowchart TD
 
-A[CivitAI REST API<br/>(LoRA 이미지 수집)] --> B[Raw Images<br/>(data/raw/all)]
-B --> C[CLIP Image Encoder<br/>(512-dim)<br/>→ npy 저장]
-C --> D[PCA → UMAP<br/>(2D)]
+A[CivitAI REST API (LoRA 이미지 수집)] --> B[Raw Images (data/raw/all)]
+B --> C[CLIP Image Encoder - 512dim → npy 저장]
+C --> D[PCA -> UMAP (2D)]
 D --> E[KMeans(k)]
-E --> F[cluster_labels.csv<br/>+ cluster_centroids.npy]
-F --> G[classifier_core.py<br/>(공유 엔진:<br/>임베딩/코사인/예측)]
+E --> F[cluster_labels.csv + cluster_centroids.npy]
+F --> G[classifier_core.py - 임베딩/코사인/예측]
 
-G --> H[classify_new<br/>(단일 LoRA)]
-G --> I[recommend_by_prompt<br/>(프롬프트 추천)]
-G --> J[auto_classify_civitai<br/>(주기적 자동 군집)]
-G --> K[Streamlit<br/>(UI 서비스)]
+G --> H[classify_new (단일 LoRA)]
+G --> I[recommend_by_prompt (프롬프트 추천)]
+G --> J[auto_classify_civitai (주기적 자동 군집)]
+G --> K[Streamlit UI 서비스]
 ```
 
 ---
